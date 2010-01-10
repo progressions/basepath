@@ -9,7 +9,7 @@ module Basepath
     file ? path : path.dirname
   end
 
-  # used when setting consts and load_path
+  # used when settings consts and load_path
   def const_expand!(s)
     (s.sub!(RX_CONSTS, '') ? Object.const_get($1) : ::BASE_PATH).join(s);
   end
@@ -17,11 +17,11 @@ end
 
 lambda do
   return if Object.const_defined?("BASE_PATH")
-
+  
   # find and set base
   # first_path  = (s = caller.last) ? s.sub(/:\d+(?::in `.*?')?$/, '') : __FILE__
-  first_path = "./"
-  cur_path    = Pathname.new(first_path).dirname.realpath
+  # cur_path    = Pathname.new(first_path).dirname.realpath
+  cur_path    = Pathname.new(File.expand_path("./")).realpath
   dot_base    = '.base'
   got_base    = lambda { cur_path.join(dot_base).exist? }
   cur_path    = cur_path.parent until cur_path == cur_path.parent or got_base[]
@@ -31,7 +31,6 @@ lambda do
   base_conf = IO.read(::BASE_PATH.join(dot_base)).strip.gsub(/[ \t]/, '').gsub(/\n+/, "\n")\
     .scan(/^\[(\w+)\]((?:\n[^\[].*)*)/)\
     .inject(Hash.new('')) { |h, (k, s)| h[k.to_sym] = s.strip; h }
-  base_conf.values.each { |s| s.gsub!(/\s*#.*\n/, "\n") }
 
   # set path consts
   consts    = base_conf[:consts].scan(/([A-Z][A-Z0-9_]*)=(.+)/).inject({}) { |h, (k, v)| h[k] = v; h }
