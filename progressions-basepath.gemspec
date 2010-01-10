@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "lib/basepath.rb",
+     "progressions-basepath.gemspec",
      "spec/basepath_spec.rb",
      "spec/spec_helper.rb"
   ]
